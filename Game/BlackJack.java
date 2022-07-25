@@ -7,12 +7,12 @@
   Description:
           Game class for game rule
  */
+
 import java.util.*;
 import java.io.*;
 
 import cs401bjproject.Lobby;
 import java.util.Vector;
-
 import javax.swing.JTextField;
 public class BlackJack2 {
 	private int user;
@@ -21,6 +21,12 @@ public class BlackJack2 {
 	private Deck deck;
 	private Scanner scan;
 	private int index = 0;
+	
+	
+	
+	/*
+	 * need to put in Oos and Ios 
+	 */
 	/*
 	 * default constructor for BlackJack game
 	 * initialize all variables
@@ -41,7 +47,11 @@ public class BlackJack2 {
 			// take the bets 	
 			amount1 = userInput.nextDouble(); 
 		}
+		Message msg = new Message();
+		msg = new Message("STEVEN TRAN", Type.GetBalance);
+		
 		double playerBalance = Player.getBalance(players.get(index).username); 
+		
 	/* 
 	 * 
 	 * Haolin needs to help with this portion 	
@@ -129,7 +139,7 @@ public class BlackJack2 {
 		Deck playingDeck = new Deck();
 		//id++;
 		playingDeck.createFullDeck();
-		//playingDeck.shuffle();
+		playingDeck.shuffle();
 		//Create a deck for a player
 		Deck playerDeck = new Deck();
 		//id++;
@@ -141,10 +151,19 @@ public class BlackJack2 {
 		//dealer gets cards
 		dealerDeck.draw(playingDeck);
 		dealerDeck.draw(playingDeck);			
-		System.out.println(playingDeck);
+		//System.out.println(playingDeck);
+		if(playerDeck.cardsValue() == 21 ) {
+			System.out.print("You win! \n");
+		}
+		if(dealerDeck.cardsValue() == 21 ) {
+			System.out.print("You lose");
+		}
+		
+		
 		/*
 		Scanner userInput = new Scanner(System.in);
 		JTextField myField = new JTextField();
+		replace scanner with public functions to call other classes 
 		
 		System.out.print("Player's Hand is: "+ playerDeck.cardsValue());
 		System.out.print(playerDeck.toString());
@@ -224,19 +243,16 @@ public class BlackJack2 {
 		System.out.println("Welcome to BlackJack\n");
 		/*
 		 * Make bets at this section 
-		 */
-		Deck playingDeck = new Deck();
-		
 		playingDeck.createFullDeck();
-		//playingDeck.shuffle();
-		System.out.println(playingDeck);
-		
+		playingDeck.shuffle();
+		//System.out.println(playingDeck);
+		 */
 		
 		
 		BlackJack2 blackJack = new BlackJack2(dealer, players); 
 		blackJack.start();
 
-		
+		Deck playingDeck = new Deck();
 		/*
 		 * After game is over move used cards back to playing deck
 		 */
@@ -245,3 +261,73 @@ public class BlackJack2 {
 
 	}
 }	
+
+/*		
+ * 			//GameLoop 
+ * 
+ * 				if(response ==1) {
+					playerDeck.draw(playingDeck);;
+					System.out.println("You draw a: " + playerDeck.getCard(playerDeck.deckSize()-1).toString());
+					//Bust if >21
+					if(playerDeck.cardsValue() > 21) {
+						System.out.println("Bust. Currently valued at: " + playerDeck.cardsValue());
+						playerMoney -= playerBet;
+						endRound = true;
+						break;
+					}
+				}
+
+			while(playerMoney > 0) {
+				//continue play
+				//Take the players bet
+				System.out.println("You have: $" + playerMoney + ", how much do you want to bet? ");
+				double playerBet = userInput.nextDouble();
+				if(playerBet > playerMoney) {
+					System.out.println("You cannot bet more than you have ");
+					break;
+				}
+			
+				boolean endRound = false;
+				//Reveal dealers hand
+				System.out.println("Dealer Cards: " + dealerDeck.toString());
+				//see if dealer has more points than player
+				if((dealerDeck.cardsValue() > playerDeck.cardsValue() && endRound == false)){
+					System.out.println("Dealer beats you!");
+					playerMoney -= playerBet;
+					endRound = true;
+				}
+				//Dealer Draws at 16 and stays 17 
+				while((dealerDeck.cardsValue() < 17 && endRound == false)) {
+					dealerDeck.draw(playingDeck);
+					System.out.println("Dealer Draws: " + dealerDeck.getCard(dealerDeck.deckSize()-1).toString());
+				}
+				//Display total value for dealer
+				System.out.println("Dealer's hand is valued at: " + dealerDeck.cardsValue());
+				//Determine if dealer busted
+				if((dealerDeck.cardsValue() > 21 && endRound == false)) {
+					System.out.println("Dealer busts! you win.");
+					playerMoney+= playerBet;
+					endRound = true;
+				}
+			
+				//Determine if push
+				if((playerDeck.cardsValue() == dealerDeck.cardsValue()) && endRound == false) {
+					System.out.println("Push");
+					endRound = true;
+				}
+			
+				if((playerDeck.cardsValue() > dealerDeck.cardsValue()) && endRound ==false) {
+					System.out.println("You win the Hand");
+					playerMoney += playerBet;
+					endRound = true;
+				}
+			
+				playerDeck.moveAllToDeck(playingDeck);
+				dealerDeck.moveAllToDeck(playingDeck);
+				System.out.println("End of hand");
+			}
+		
+			System.out.println("Out of money!");
+		}
+*/
+
