@@ -10,13 +10,16 @@ package server;
  */
 
 import java.io.ObjectOutputStream;
+import java.util.ArrayList;
 
 public class Player {
     public String username;
     public String password;
-    public int balance;
+    public static int balance;
     public boolean isDealer = false;
+	  public Deck deck;
     public static ObjectOutputStream oos;
+    private ArrayList<Card> cards;
 
     public Player() {
         this.username = "[Undefined]";
@@ -37,6 +40,7 @@ public class Player {
      * getter function for password
      * @return String password
      */
+
     public String getPassword(String username) {
         return this.password;
     }
@@ -45,8 +49,8 @@ public class Player {
      * getter function for password
      * @return int balance
      */
-    public int getBalance(String username) {
-        return this.balance;
+    public static int getBalance(String username) {
+        return balance;
     }
 
     /*
@@ -72,4 +76,5 @@ public class Player {
     public ObjectOutputStream getOos() {
         return oos;
     }
+
 }
