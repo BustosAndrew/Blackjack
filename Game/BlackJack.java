@@ -7,12 +7,12 @@
   Description:
           Game class for game rule
  */
+
 import java.util.*;
 import java.io.*;
 
 import cs401bjproject.Lobby;
 import java.util.Vector;
-
 import javax.swing.JTextField;
 public class BlackJack2 {
 	private int user;
@@ -21,13 +21,21 @@ public class BlackJack2 {
 	private Deck deck;
 	private Scanner scan;
 	private int index = 0;
+	private static ObjectOutputStream os;
+	private static ObjectInputStream ois;
+	
+	/*
+	 * need to put in Oos and Ios 
+	 */
 	/*
 	 * default constructor for BlackJack game
 	 * initialize all variables
 	 */
-	public BlackJack2(Player dealer, ArrayList<Player> players) {
+	public BlackJack2(Player dealer, ArrayList<Player> players, ObjectOutputStream os, ObjectInputStream ois) {
 		this.dealer = dealer;
 		this.players = players;
+		this.os = os;
+		this.ois = ois;
 	}
 
 	/*
@@ -41,7 +49,29 @@ public class BlackJack2 {
 			// take the bets 	
 			amount1 = userInput.nextDouble(); 
 		}
-		double playerBalance = Player.getBalance(players.get(index).username); 
+		Message msg = new Message();
+		msg = new Message("STEVEN TRAN", Type.GetBalance);
+		//msg2 = new Message("ANDREW", Type.GetBalance);
+		Message balance = new Message();
+		balance = new Message("BALANCE", Type.ShowBalance);
+		Integer.parseInt((String) balance.getData());
+		try {
+			os.writeObject(balance);
+			os.writeObject(msg);
+			//os.writeObject(msg2);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}	
+		//msg2 = new Message("ANDREW", Type.GetBalance);
+		try {
+			os.writeObject(msg);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		//double playerBalance = Player.getBalance(players.get(index).username); 
+		
 	/* 
 	 * 
 	 * Haolin needs to help with this portion 	
@@ -65,22 +95,35 @@ public class BlackJack2 {
 		//load players value then add a new amount 
 
 		*/	
+		Message H = new Message();
+		H = new Message("HIT", Type.Hit);
+		try {
+			os.writeObject(H);
+			Deck tmpDeck = this.deck; 
+			this.deck = tmpDeck;
+			this.deck.draw(tmpDeck);
+			System.out.println(tmpDeck.toString());
+			if (tmpDeck.cardsValue() > 21) throw new Exception ("you lose");
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 		System.out.println("hello");
-		Deck tmpDeck = this.deck; 
-		this.deck = tmpDeck;
-		this.deck.draw(tmpDeck);
+		
 		//Deck playingDeck = new Deck();
 		//Deck playerDeck = new Deck();
 		//playerDeck.draw(playingDeck);
 		
 		//System.out.print("Your Hand is: "+ playerDeck.cardsValue());
-		System.out.print(tmpDeck.toString());
-		if (tmpDeck.cardsValue() > 21) {
-			System.out.println("You lose");
+		
+		
 //--------------the amount bet will be taken from player 
 		}
 			//playerTurn(player,deck);
-	}
+	
 
 	/*
 	 * do nothing, mark as skip
@@ -129,7 +172,7 @@ public class BlackJack2 {
 		Deck playingDeck = new Deck();
 		//id++;
 		playingDeck.createFullDeck();
-		//playingDeck.shuffle();
+		playingDeck.shuffle();
 		//Create a deck for a player
 		Deck playerDeck = new Deck();
 		//id++;
@@ -141,10 +184,19 @@ public class BlackJack2 {
 		//dealer gets cards
 		dealerDeck.draw(playingDeck);
 		dealerDeck.draw(playingDeck);			
-		System.out.println(playingDeck);
+		//System.out.println(playingDeck);
+		if(playerDeck.cardsValue() == 21 ) {
+			System.out.print("You win! \n");
+		}
+		if(dealerDeck.cardsValue() == 21 ) {
+			System.out.print("You lose");
+		}
+		
+		
 		/*
 		Scanner userInput = new Scanner(System.in);
 		JTextField myField = new JTextField();
+		replace scanner with public functions to call other classes 
 		
 		System.out.print("Player's Hand is: "+ playerDeck.cardsValue());
 		System.out.print(playerDeck.toString());
@@ -186,13 +238,16 @@ public class BlackJack2 {
 				scan.nextLine();
 				switch(choice) 
 				{
-				case 0: //hit(null);
-					hit(players.get(index), playingDeck);
+				case 0: hit(null, null);
+					//hit(players.get(index), playingDeck);
 					System.out.println("Hit is called");
+					System.out.print(players + "'s Hand is: "+ deck.cardsValue());
+					System.out.print(deck.toString());
 					continue;
-				case 1: //stay(null);
-					stay(players.get(index));
+				case 1: stay(null);
+					//stay(players.get(index));
 					index++;
+					System.out.println(index);
 					break;
 				case 2: 
 					getInfo();
@@ -210,6 +265,7 @@ public class BlackJack2 {
 				}
 				if(dealerDeck.cardsValue() > 21 ) {
 					System.out.println("Dealer busts! you win.");
+					break;
 				}
 
 			}
@@ -224,19 +280,16 @@ public class BlackJack2 {
 		System.out.println("Welcome to BlackJack\n");
 		/*
 		 * Make bets at this section 
-		 */
-		Deck playingDeck = new Deck();
-		
 		playingDeck.createFullDeck();
-		//playingDeck.shuffle();
-		System.out.println(playingDeck);
+		playingDeck.shuffle();
+		//System.out.println(playingDeck);
+		 */
 		
 		
-		
-		BlackJack2 blackJack = new BlackJack2(dealer, players); 
+		BlackJack2 blackJack = new BlackJack2(dealer, players, os, ois); 
 		blackJack.start();
 
-		
+		Deck playingDeck = new Deck();
 		/*
 		 * After game is over move used cards back to playing deck
 		 */
